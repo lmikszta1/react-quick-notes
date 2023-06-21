@@ -1,28 +1,37 @@
 import { useState } from "react";
+import { createNote } from '../../utilities/notes-service'
 
 export default function NotesIndexPage({user}) {
     const [notes, setNotes] = useState([]);
-    const [newNoteText, setNewNoteText] = useState("");
+    const [newNoteText, setNewNoteText] = useState({text: ''});
 
-    const handleAddNote = (event) => {
+    async function handleSubmit(event){
         event.preventDefault();
+        console.log('this is user in handleAddNote', user);
         const newNote = {
-            text: newNoteText,
-            createdAt: new Date(),
+            text: newNoteText.text,
+            user: user._id
         };
-        setNotes([...notes, newNote]);
-        setNewNoteText("");
+        const note = await createNote(newNote)
+        setNotes([...notes, note]);
+        console.log("notes in handleAddNote", notes)
+        setNewNoteText({text: ""});
     };
+
+    function handleChange(evt){
+        setNewNoteText({...newNoteText, [evt.target.name]: evt.target.value});
+    }
 
     return (
         <div>
         <h1>{notes.length === 0 ? "No Notes Yet!" : "Notes"}</h1>
 
         {/* Add Note form */}
-        <form onSubmit={handleAddNote}>
+        <form onSubmit={handleSubmit}>
             <textarea
-            value={newNoteText}
-            onChange={(event) => setNewNoteText(event.target.value)}
+            name='text'
+            value={newNoteText.text}
+            onChange={handleChange}
             />
             <button type="submit">Add Note</button>
         </form>
