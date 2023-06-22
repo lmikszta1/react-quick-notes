@@ -9,6 +9,12 @@ async function createNote(req, res){
     }
 }
 
+async function index(req, res){
+    const notes = await Note.find({})
+    res.json(notes)
+}
+
 module.exports = {
     createNote,
+    index
 }

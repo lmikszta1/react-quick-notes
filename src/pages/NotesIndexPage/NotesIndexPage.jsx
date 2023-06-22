@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createNote } from '../../utilities/notes-service'
+import * as notesAPI from '../../utilities/notes-api'
+import Note from '../../components/Note/Note'
 
 export default function NotesIndexPage({user}) {
     const [notes, setNotes] = useState([]);
@@ -22,6 +24,22 @@ export default function NotesIndexPage({user}) {
         setNewNoteText({...newNoteText, [evt.target.name]: evt.target.value});
     }
 
+    useEffect(() =>{
+        async function getItems(){
+            const items = await notesAPI.getNotes()
+            setNotes(items)
+        }
+        getItems()
+        console.log('this is notes after useEffect', notes)
+    }, [])
+
+    const noteItems = notes.map(note => 
+        <Note 
+            key={note._id}
+            note={note}
+        />
+    )
+
     return (
         <div>
         <h1>{notes.length === 0 ? "No Notes Yet!" : "Notes"}</h1>
@@ -41,12 +59,7 @@ export default function NotesIndexPage({user}) {
             <p>No notes yet!</p>
         ) : (
             <ul>
-            {notes.map((note, index) => (
-                <li key={index}>
-                <p>{note.text}</p>
-                <p>{note.createdAt.toLocaleString()}</p>
-                </li>
-            ))}
+                {noteItems}
             </ul>
         )}
         </div>
