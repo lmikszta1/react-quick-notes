@@ -37,6 +37,7 @@ export default function NotesIndexPage({user}) {
         <Note 
             key={note._id}
             note={note}
+            user={user}
         />
     )
 
